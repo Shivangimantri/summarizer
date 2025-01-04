@@ -8,7 +8,7 @@ def fetch_article_text(url):
     return article.text
 
 # Replace with your NewsAPI key
-API_KEY = "376d667f39364e86bd67d27bd141159f"
+API_KEY = "YOUR_NEWSAPI"
 
 # Function to fetch news articles
 def fetch_news(query, page_size=10):
