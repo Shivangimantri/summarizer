@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Summarizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .article {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>News Summarizer</h1>
+    <form id="newsForm">
+        <label for="query">Enter a topic:</label>
+        <input type="text" id="query" name="query" required>
+        <button type="submit">Get Summaries</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        const form = document.getElementById('newsForm');
+        const resultsDiv = document.getElementById('results');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const query = document.getElementById('query').value;
+
+            resultsDiv.innerHTML = "<p>Loading...</p>";
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/summarize-news', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query, page_size: 3 })
+                });
+                const data = await response.json();
+
+                resultsDiv.innerHTML = ""; // Clear loading message
+                data.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.classList.add('article');
+                    articleDiv.innerHTML = `
+                        <h3>${article.title}</h3>
+                        <p>${article.summary}</p>
+                        <a href="${article.link}" target="_blank">Read Full Article</a>
+                        <p><strong>Publisher:</strong> ${article.publisher}</p>
+                    `;
+                    resultsDiv.appendChild(articleDiv);
+                });
+            } catch (error) {
+                resultsDiv.innerHTML = "<p>Error fetching data. Please try again.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
